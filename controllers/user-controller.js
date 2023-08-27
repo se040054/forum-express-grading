@@ -4,6 +4,7 @@ const { User, Comment, Restaurant, Favorite, Like, Followship } = require('../mo
 const { localFileHandler, defaultAvatarPath } = require('../helpers/file-helper')
 const favorite = require('../models/favorite')
 const followship = require('../models/followship')
+const restaurant = require('../models/restaurant')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -56,12 +57,22 @@ const userController = {
         if (!user.image) {
           user.image = defaultAvatarPath // 指定預設頭貼
         }
-        // 這邊有個很重要的邏輯，使用者的其他判斷是否要放入資料物件內 或是另外傳遞
+        // 這邊有個邏輯，使用者的其他判斷是否要放入資料物件內，或是另外傳遞
         // 思考的方向: 若取得的資料為多筆放入物件，單筆則另外傳遞
         const isSelf = Number(req.user.id) === Number(user.id)
         const isFollowed = req.user && req.user.Followings.some(f => f.id === user.id)
+        const data = user.toJSON() // 這邊是值傳遞
+        const Comments = data.Comments // 這邊是址傳遞,data是物件
+        for (let i = Comments.length - 1; i > 0; i--) {
+          for (let j = i - 1; j >= 0; j--) {
+            if (Comments[i].restaurantId === Comments[j].restaurantId) {
+              Comments.splice([i], 1)
+              break // (!)必須使用，有刪除則停止這次的迴圈
+            }
+          }
+        }
         return res.render('users/profile', {
-          user: user.toJSON(),
+          user: data,
           isSelf,
           isFollowed
         })

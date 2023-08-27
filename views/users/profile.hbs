@@ -1,4 +1,4 @@
-<div class="card mb-3" style="max-width: 1000px;">
+<div class="card mb-3" style="max-width:840px;">
   <div class="row g-0">
     <div class="col-md-4">
       <img class="card-img-top img-fluid" src="{{user.image}}" alt="Card image cap" width="286px" height="180px"
@@ -8,32 +8,95 @@
       <div class="card-body">
         <h5 class="card-title">{{user.name}}</h5>
         <p class="card-text">{{user.email}}</p>
-        <p class="card-text"> 已評論餐廳數量 : {{user.Comments.length}}</p>
+        <p class="card-text">{{user.Comments.length}} 已評論餐廳數量 </p>
+        <p class="card-text">{{user.FavoritedRestaurants.length}} 此使用者收藏的餐廳</p>
+        <p class="card-text">{{user.Followers.length}} 被追蹤</p>
+        <p class="card-text"> {{user.Followings.length}}  追蹤中 : </p>
         {{#ifCond user.id loginUser.id}} 
           <a class="btn btn-primary" href="/users/{{user.id}}/edit">Edit</a>
         {{/ifCond}}
-        
-        <form action="/following/{{user.id}}" method="POST" style="display: contents;">
-            <button type="submit" class="btn btn-primary">追蹤</button>
-          </form>
+        {{#unless isSelf}}
+        {{#if isFollowed}}
         <form action="/following/{{user.id}}?_method=DELETE" method="POST" style="display: contents;">
-            <button type="submit" class="btn btn-danger">取消追蹤</button>
+          <button type="submit" class="btn btn-danger">取消追蹤</button>
         </form>
+        {{else}}
+        <form action="/following/{{user.id}}" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-primary">追蹤</button>
+        </form>
+        {{/if}}
+        {{/unless}}
       </div>
-
     </div>
   </div>
 </div>
 
+{{!-- 追蹤的使用者 --}}
+<div class="card mt-2 mb-2">
+  <div class="card-header"> 
+    <p> {{user.Followings.length}}  追蹤中 : </p>
+  </div>
+  <div class="card-body d-flex flex-wrap">
+    {{#if user.Followings.length}}
+    {{#each user.Followings}}
+    <div class="card me-2"  >
+      {{#if this.image}}
+      <a href="/users/{{this.id}}">
+       <img src="{{this.image}}" class="card-img-top" alt="..." width="50" height="50">
+      </a>
+      {{else}}
+      <a href="/users/{{this.id}}">
+      <img src="{{defaultAvatarPath}}" class="card-img-top" alt="..." width="50" height="50">
+      </a>
+      {{/if}}
+        <a href="/users/{{this.id}}">{{this.name}}</a>
+    </div>
+    {{/each}}
+        {{else}}
+    <p>尚未追蹤任何使用者</p>
+    {{/if}}
+  </div>
+</div>
+
+{{!-- 被追蹤的使用者 --}}
+<div class="card mt-2 mb-2">
+  <div class="card-header"> 
+    <p> {{user.Followers.length}}  被追蹤 : </p>
+  </div>
+  <div class="card-body d-flex flex-wrap">
+    {{#if user.Followers.length}}
+    {{#each user.Followers}}
+    <div class="card me-2"  >
+      {{#if this.image}}
+      <a href="/users/{{this.id}}">
+       <img src="{{this.image}}" class="card-img-top" alt="..." width="50" height="50">
+      </a>
+     
+      {{else}}
+      <a href="/users/{{this.id}}">
+      <img src="{{defaultAvatarPath}}" class="card-img-top" alt="..." width="50" height="50">
+      </a>
+      {{/if}}
+        <a href="/users/{{this.id}}">{{this.name}}</a>
+    </div>
+    {{/each}}
+        {{else}}
+    <p>尚未被任何使用者追蹤</p>
+    {{/if}}
+  </div>
+</div>
+
+
+{{!-- 評論的餐廳 --}}
 <div class="accordion mt-5 mb-5" id="accordionExample">
-  <div class="accordion-item">
+   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
         {{user.Comments.length}} 此使用者評論的餐廳 : 
       </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-      <div class="accordion-body d-flex ">
+      <div class="accordion-body d-flex flex-wrap">
           {{#if user.Comments.length}}
           {{#each user.Comments}}
             <div class="card ms-3 me-3 mt-3"  style="width: 200px;">
@@ -45,6 +108,33 @@
           {{/each}}
           {{else}}
           <h4>尚未留下任何評論。</h4>
+          {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- 收藏的餐廳 --}}
+<div class="accordion mt-5 mb-5" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        {{user.FavoritedRestaurants.length}} 此使用者收藏的餐廳 : 
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body d-flex flex-wrap">
+          {{#if user.FavoritedRestaurants.length}}
+          {{#each user.FavoritedRestaurants}}
+            <div class="card ms-3 me-3 mt-3"  style="width: 200px;">
+              <a href="/restaurants/{{this.id}}" class="card-text"> {{this.name}}</p> 
+              <a href="/restaurants/{{this.id}}">
+              <img width="200px" height="200px" src="{{this.image}}" alt="">
+              </a>
+            </div>
+          {{/each}}
+          {{else}}
+          <h4>尚未收藏任何餐廳。</h4>
           {{/if}}
           
       </div>

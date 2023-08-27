@@ -117,7 +117,7 @@ const restaurantController = {
           isFavorited: req.user && req.user.FavoritedRestaurants.some(fr => fr.id === restaurant.id)
         })// 記得要驗證req.user 否則測試不會通過
         ).sort((res1, res2) => res2.favoritedCount - res1.favoritedCount)
-        restaurants = restaurants.slice(0, 11)
+        restaurants = restaurants.slice(0, 10)
         return res.render('top-restaurants', { restaurants })
       })
       .catch(err => next(err))

@@ -44,14 +44,27 @@ const userController = {
   },
   getUser: (req, res, next) => {
     return User.findByPk(req.params.id, {
-      include: { model: Comment, include: Restaurant }
+      include: [
+        { model: Comment, include: Restaurant },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
+        { model: Restaurant, as: 'FavoritedRestaurants' }
+      ]
     })
       .then(user => {
         if (!user) throw new Error('使用者不存在')
         if (!user.image) {
           user.image = defaultAvatarPath // 指定預設頭貼
         }
-        return res.render('users/profile', { user: user.toJSON() })
+        // 這邊有個很重要的邏輯，使用者的其他判斷是否要放入資料物件內 或是另外傳遞
+        // 思考的方向: 若取得的資料為多筆放入物件，單筆則另外傳遞
+        const isSelf = Number(req.user.id) === Number(user.id)
+        const isFollowed = req.user && req.user.Followings.some(f => f.id === user.id)
+        return res.render('users/profile', {
+          user: user.toJSON(),
+          isSelf,
+          isFollowed
+        })
       }).catch(err => next(err))
   },
   editUser: (req, res, next) => {
@@ -201,6 +214,7 @@ const userController = {
         console.log('這個追蹤: ', followship)
         if (!user) throw new Error('用戶不存在')
         if (followship) throw new Error('已經追蹤過')
+        if (req.user.id === user.id) throw new Error('無法追蹤自己')
         return Followship.create({
           followerId: req.user.id,
           followingId: userId

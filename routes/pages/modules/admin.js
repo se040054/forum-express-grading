@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
-const adminController = require('../../controllers/admin-controller')
-const categoryController = require('../../controllers/category-controller')
+const adminController = require('../../../controllers/pages/admin-controller')
+const categoryController = require('../../../controllers/pages/category-controller')
 
-const upload = require('../../middleware/multer') // 需要上傳的路由掛載
+const upload = require('../../../middleware/multer') // 需要上傳的路由掛載
 
 /**    使用者餐廳部分  **/
 router.get('/restaurants/create', adminController.createRestaurants)

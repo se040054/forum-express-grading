@@ -1,5 +1,5 @@
-const { Category, Restaurant } = require('../models')
-const { deletedCategoryFilter, deletedCategoryId } = require('../helpers/deleted-filter-helper')
+const { Category, Restaurant } = require('../../models')
+const { deletedCategoryFilter, deletedCategoryId } = require('../../helpers/deleted-filter-helper')
 
 const categoryController = {
   getCategories: (req, res, next) => {

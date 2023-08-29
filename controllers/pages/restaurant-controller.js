@@ -1,6 +1,6 @@
-const { Restaurant, Category, User, Comment, Favorite } = require('../models')
-const { deletedCategoryFilter } = require('../helpers/deleted-filter-helper')
-const { getOffset, getPagination } = require('../helpers/pagination-helpler')
+const { Restaurant, Category, User, Comment } = require('../../models')
+const { deletedCategoryFilter } = require('../../helpers/deleted-filter-helper')
+const { getOffset, getPagination } = require('../../helpers/pagination-helpler')
 const restaurantController = {
   getRestaurants: (req, res, next) => {
     const categoryId = Number(req.query.categoryId) || '' // 注意req.query是字串要轉型別，全部要給空字串

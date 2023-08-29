@@ -1,6 +1,6 @@
-const { Restaurant, User, Category } = require('../models')
-const { localFileHandler } = require('../helpers/file-helper')
-const { deletedCategoryFilter } = require('../helpers/deleted-filter-helper')
+const { Restaurant, User, Category } = require('../../models')
+const { localFileHandler } = require('../../helpers/file-helper')
+const { deletedCategoryFilter } = require('../../helpers/deleted-filter-helper')
 const adminController = {
 
   /**       使用者管理餐廳部分        **/

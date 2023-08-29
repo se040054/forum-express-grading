@@ -1,18 +1,14 @@
 const { Restaurant, User, Category } = require('../../models')
+
 const { localFileHandler } = require('../../helpers/file-helper')
 const { deletedCategoryFilter } = require('../../helpers/deleted-filter-helper')
+
+const adminServices = require('../../services/admin-services')
+
 const adminController = {
-
   /**       使用者管理餐廳部分        **/
-
   getRestaurants: (req, res, next) => {
-    Restaurant.findAll({
-      raw: true,
-      nest: true,
-      include: [Category] // 必須要是陣列
-    })
-      .then(restaurants => res.render('admin/restaurants', { restaurants }))
-      .catch(err => next(err))
+    adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   createRestaurants: (req, res, next) => {
     Category.findAll({ raw: true })

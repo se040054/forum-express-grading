@@ -51,7 +51,11 @@
     </form>
   {{/if}}
   <blockquote class="blockquote mb-3">
+    {{#if this.User.image}}
     <img src="{{this.User.image}}" alt="" width="50" height="50">
+    {{else}}
+    <img src="{{defaultAvatarPath}}" alt="" width="50" height="50">
+    {{/if}}
     <a href="/users/{{this.User.id}}">{{this.User.name}}</a> 說 :
     <p class="text mt-3 mb-5">{{this.text}}</p>
     <footer class="blockquote-footer">{{relativeTimeFromNow this.createdAt}}</footer>

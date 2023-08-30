@@ -1,6 +1,11 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const passportJWT = require('passport-jwt')
+const JWTStrategy = passportJWT.Strategy // 注意這是class，不能用解構賦值
+const ExtractJWT = passportJWT.ExtractJwt // 注意這是class，不能用解構賦值
+
 const bcrypt = require('bcryptjs')
+
 const { User, Restaurant } = require('../models')
 
 // 選擇登入策略
@@ -26,12 +31,30 @@ passport.use(new LocalStrategy(
   }
 ))
 
+const jwtOptions = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(), // 設定jwtToken如何取得的方式
+  secretOrKey: process.env.JWT_SECRET // 檢查token是否竄改
+}
+
+passport.use(new JWTStrategy(jwtOptions, (jwtPayload, cb) => {
+  User.findByPk(jwtPayload.id, { // Payload為解析token後的主體資料
+    include: [
+      { model: Restaurant, as: 'FavoritedRestaurants' }, // 取用的關係必須明確指定
+      { model: Restaurant, as: 'LikedRestaurants' },
+      { model: User, as: 'Followers' },
+      { model: User, as: 'Followings' }
+    ]
+  })
+    .then(user => cb(null, user)) // jwt拿出來的已經是JSON格式，這組資料會成為req.user
+    .catch(err => cb(err))
+}))
+
 // serialize
-passport.serializeUser((user, done) => {
-  done(null, user.id)
+passport.serializeUser((user, cb) => {
+  cb(null, user.id)
 })
 // deserialize user
-passport.deserializeUser((id, done) => {
+passport.deserializeUser((id, cb) => {
   User.findByPk(id, {
     include: [
       { model: Restaurant, as: 'FavoritedRestaurants' }, // 取用的關係必須明確指定
@@ -40,7 +63,7 @@ passport.deserializeUser((id, done) => {
       { model: User, as: 'Followings' }
     ]
   })
-    .then(user => done(null, user.toJSON()))
-    .catch(err => done(err))
+    .then(user => cb(null, user.toJSON()))
+    .catch(err => cb(err))
 })
 module.exports = passport

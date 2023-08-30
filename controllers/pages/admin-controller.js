@@ -24,7 +24,7 @@ const adminController = {
       if (err) return next(err)
       req.flash('success_messages', '餐廳新增成功')
       req.session.createdData = data // 保留新增資料備用做法
-      return res.redirect('/admin/restaurants', data)
+      return res.redirect('/admin/restaurants')
     })
   },
   getRestaurant: (req, res, next) => {

@@ -1,7 +1,7 @@
 const path = require('path')
 const handlebars = require('express-handlebars')
 const express = require('express')
-
+require('dotenv').config()
 const flash = require('connect-flash')
 const methodOverride = require('method-override')
 const session = require('express-session')
@@ -12,14 +12,13 @@ const { pages, apis } = require('./routes')
 
 const app = express()
 const port = process.env.PORT || 3000
-const SESSION_SECRET = 'secret'
 
 app.engine('hbs', handlebars({ extname: '.hbs', helpers: handlebarsHelpers }))
 app.set('view engine', 'hbs')
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json()) // 給api post用
-app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }))
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }))
 
 app.use(passport.initialize())
 app.use(passport.session())

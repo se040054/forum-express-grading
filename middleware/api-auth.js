@@ -7,7 +7,7 @@ const passport = require('../config/passport')
 const authenticated = (req, res, next) => {
   passport.authenticate('jwt', { session: false }, (err, user) => { // (err, user) 是cb函式
     if (err || !user) return res.status(401).json({ status: 'error', message: '未授權' })
-    req.user = user
+    req.user = user // 被cb覆蓋掉了 記得寫回來 否則登入不會有req.user
     next()
   })(req, res, next)
 }

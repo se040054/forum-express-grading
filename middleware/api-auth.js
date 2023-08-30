@@ -14,7 +14,7 @@ const authenticated = (req, res, next) => {
 
 const authenticatedAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) return next()
-  return res.status(403).res.json({ status: 'error', message: '登入失敗' })
+  return res.status(403).res.json({ status: 'error', message: '未授權' })
 }
 module.exports = {
   authenticated,

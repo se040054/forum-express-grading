@@ -8,7 +8,7 @@ const restController = require('../../controllers/apis/restaurant-controller')
 const userController = require('../../controllers/apis/user-controller')
 
 const { apiErrorHandler } = require('../../middleware/error-handler')
-const { authenticated, authenticatedAdmin } = require('../../middleware/apiAuth')
+const { authenticated, authenticatedAdmin } = require('../../middleware/api-auth')
 
 // 管理者部分
 router.use('/admin', authenticated, authenticatedAdmin, admin)

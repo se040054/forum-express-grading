@@ -3,7 +3,7 @@ const { deletedCategoryFilter } = require('../helpers/deleted-filter-helper')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const restaurantServices = {
-  getRestaurants: (req, callback) => { // 抽換成服務的時候callback資料回去
+  getRestaurants: (req, cb) => { // 抽換成服務的時候cb資料回去
     const categoryId = Number(req.query.categoryId) || '' // 注意req.query是字串要轉型別，全部要給空字串
     const DEFAULT_LIMIT = 9
     const page = Number(req.query.page) || 1
@@ -37,14 +37,14 @@ const restaurantServices = {
         })
         )
         categories = deletedCategoryFilter(categories)
-        return callback(null, {
+        return cb(null, {
           restaurants: restaurants.rows, // 注意這裡要用rows
           categories,
           categoryId,
           pagination: getPagination(limit, page, restaurants.count)
         })
       })
-      .catch(err => callback(err))
+      .catch(err => cb(err))
   }
 }
 module.exports = restaurantServices

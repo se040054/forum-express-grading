@@ -20,25 +20,12 @@ const adminController = {
       .catch(err => next(err))
   },
   postRestaurant: (req, res, next) => {
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name) throw new Error('名字是必填欄位')
-    const { file } = req // 這個是因為有Multer做成的image 被當成req.file傳過來
-    localFileHandler(file) // 丟進Multer抓到的file ，回傳正式路徑
-      .then(filePath => Restaurant.create(
-        {
-          name,
-          tel,
-          address,
-          openingHours,
-          description,
-          image: filePath || null,
-          categoryId
-        }
-      ))
-      .then(() => {
-        req.flash('success_messages', '新增餐廳成功')
-        res.redirect('/admin/restaurants')
-      }).catch(err => next(err))
+    adminServices.postRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', '餐廳新增成功')
+      req.session.createdData = data // 保留新增資料備用做法
+      return res.redirect('/admin/restaurants', data)
+    })
   },
   getRestaurant: (req, res, next) => {
     Restaurant.findByPk(req.params.id, {
@@ -95,8 +82,9 @@ const adminController = {
   deleteRestaurant: (req, res, next) => {
     adminServices.deleteRestaurant(req, (err, data) => {
       if (err) return next(err)
+      req.flash('success_messages', '餐廳刪除成功')
       req.session.deletedData = data // 保留刪除資料備用做法
-      return res.redirect('/admin/restaurants', data)
+      return res.redirect('/admin/restaurants')
     }
     )
   },

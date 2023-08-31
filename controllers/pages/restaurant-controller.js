@@ -6,34 +6,7 @@ const restaurantController = {
     restaurantServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('restaurants', data))
   },
   getRestaurant: (req, res, next) => {
-    return Restaurant.findByPk(req.params.id, {
-      include: [
-        Category,
-        { model: Comment, include: User },
-        { model: User, as: 'FavoritedUsers' }, // 把收藏此餐廳的使用者抓出來
-        { model: User, as: 'LikedUsers' } // 按過讚的使用者抓出來
-      ],
-      order: [
-        [Comment, 'createdAt', 'DESC'] // 新的時間在上面
-      ]
-      // EagerLoading會自動幫你抓外鍵對應的資料
-      // 注意返回的資料類型hasMany為物件陣列，belongsTo為物件
-    })
-      .then(restaurant => {
-        if (!restaurant) throw new Error('此餐廳不存在')
-        return restaurant.increment('viewCounts')
-      })
-      .then(restaurant => {
-        // 這邊改用some 搜到一個匹配就停止 , 登入者的id若有匹配到此餐廳收藏者id就true
-        const isFavorited = restaurant.FavoritedUsers.some(fu => fu.id === req.user.id)
-        const isLiked = restaurant.LikedUsers.some(lu => lu.id)
-        return res.render('restaurant', {
-          restaurant: restaurant.toJSON(),
-          isFavorited,
-          isLiked
-        })
-      })
-      .catch(err => next(err))
+    restaurantServices.getRestaurant(req, (err, data) => err ? next(err) : res.render('restaurant', data))
   },
   getDashboard: (req, res, next) => {
     return Restaurant.findByPk(req.params.id,

@@ -12,8 +12,11 @@ const { authenticated, authenticatedAdmin } = require('../../middleware/api-auth
 
 // 管理者部分
 router.use('/admin', authenticated, authenticatedAdmin, admin)
+
 // 餐廳部分
 router.get('/restaurants', authenticated, restController.getRestaurants)
+router.get('/restaurants/:id', authenticated, restController.getRestaurant)
+
 // 使用者部分
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn)
 router.post('/signup', userController.signUp)

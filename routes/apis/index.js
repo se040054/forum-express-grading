@@ -6,7 +6,7 @@ const passport = require('../../config/passport')
 
 const restController = require('../../controllers/apis/restaurant-controller')
 const userController = require('../../controllers/apis/user-controller')
-
+const commentController = require('../../controllers/apis/comment-controller')
 const { apiErrorHandler } = require('../../middleware/error-handler')
 const { authenticated, authenticatedAdmin } = require('../../middleware/api-auth')
 
@@ -19,6 +19,9 @@ router.get('/restaurants/top', authenticated, restController.getTopRestaurants) 
 router.get('/restaurants', authenticated, restController.getRestaurants)
 router.get('/restaurants/:id', authenticated, restController.getRestaurant)
 router.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
+
+router.delete('/comments/:id', authenticated, authenticatedAdmin, commentController.deleteComment) // 記得兩個驗證都要掛
+router.post('/comments', authenticated, commentController.postComment)
 
 // 使用者部分
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn)

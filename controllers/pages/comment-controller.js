@@ -1,31 +1,23 @@
-const { Restaurant, User, Comment } = require('../../models')
+const commentServices = require('../../services/comment-services')
 
 const commentController = {
   postComment: (req, res, next) => {
-    const { restaurantId, text } = req.body
-    const userId = req.user.id
-    if (!text) throw new Error('評論不可空白')
-    Promise.all([ // 先確認餐廳跟使用者是否都存在
-      Restaurant.findByPk(restaurantId),
-      User.findByPk(userId)
-    ]).then(([restaurant, user]) => {
-      if (!restaurant) throw new Error('餐廳不存在')
-      if (!user) throw new Error('使用者不存在')
-
-      return Comment.create({ text, restaurantId, userId })
+    commentServices.postComment(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', '評論新增成功')
+      req.session.newComment = data // 保留新增資料備用做法
+      // console.log('api data is :', data, data.comment.restaurantId)
+      return res.redirect(`/restaurants/${data.comment.restaurantId}`) // 記得修改這裡的導向id
     })
-      .then(() => res.redirect(`/restaurants/${restaurantId}`))
-      .catch(err => next(err))
   },
   deleteComment: (req, res, next) => {
-    return Comment.findByPk(req.params.id)
-      .then(comment => {
-        if (!comment) throw new Error('評論不存在')
-        return comment.destroy() // 這個也會返回被刪除的資料
-      })
-      .then(deletedComment => res.redirect(`/restaurants/${deletedComment.restaurantId}`))
-      .catch(err => next(err))
+    commentServices.deleteComment(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', '評論刪除成功')
+      req.session.deletedComment = data // 保留新增資料備用做法
+      //  console.log('api data is :', data, data.comment.restaurantId)
+      return res.redirect(`/restaurants/${data.comment.restaurantId}`) // 記得修改這裡的導向id
+    })
   }
 }
-
 module.exports = commentController

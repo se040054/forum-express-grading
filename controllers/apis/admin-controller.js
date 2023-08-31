@@ -1,6 +1,7 @@
 const adminServices = require('../../services/admin-services')
 
 const adminController = {
+  // 管理者餐廳部分
   getRestaurants: (req, res, next) => {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
@@ -15,6 +16,11 @@ const adminController = {
   },
   putRestaurant: (req, res, next) => {
     adminServices.putRestaurant(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
+
+  // 管理者用戶部分
+  getUsers: (req, res, next) => {
+    adminServices.getUsers(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   }
 
 }

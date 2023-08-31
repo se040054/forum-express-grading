@@ -64,15 +64,7 @@ const adminController = {
 
   /**         使用者管理使用者部分        **/
   getUsers: (req, res, next) => {
-    return User.findAll({ raw: true })
-      .then(users => {
-        users.forEach(user => {
-          if (user.isAdmin === 0) user.role = 'user'
-          if (user.isAdmin === 1) user.role = 'admin'
-        })
-        return res.render('admin/users', { users })
-      })
-      .catch(err => next(err))
+    adminServices.getUsers(req, (err, data) => err ? next(err) : res.render('admin/users', data))
   },
   patchUser: (req, res, next) => { // 注意如果把當前管理者改掉會跳出後臺管理
     return User.findByPk(req.params.id) // 注意全部最後都return 回來 1.確保執行2.確保自動化測試

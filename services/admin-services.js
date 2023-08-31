@@ -1,7 +1,8 @@
-const { Restaurant, Category } = require('../models')
+const { Restaurant, Category, User } = require('../models')
 const { localFileHandler } = require('../helpers/file-helper')
 
 const adminServices = {
+  /** 管理者餐廳部分 */
   getRestaurants: (req, cb) => { // req保留
     Restaurant.findAll({
       raw: true,
@@ -70,6 +71,19 @@ const adminServices = {
         })
         // 注意這邊要加return 讓findByPk有返回值 才能讓後續接.then
       }).then(editedRestaurant => cb(null, { restaurant: editedRestaurant }))
+      .catch(err => cb(err))
+  },
+
+  /** 管理者 用戶部分 **/
+  getUsers: (req, cb) => {
+    return User.findAll({ raw: true })
+      .then(users => {
+        users.forEach(user => {
+          if (user.isAdmin === 0) user.role = 'user'
+          if (user.isAdmin === 1) user.role = 'admin'
+        })
+        return cb(null, { users })
+      })
       .catch(err => cb(err))
   }
 }

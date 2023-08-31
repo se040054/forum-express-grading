@@ -9,13 +9,7 @@ const restaurantController = {
     restaurantServices.getRestaurant(req, (err, data) => err ? next(err) : res.render('restaurant', data))
   },
   getDashboard: (req, res, next) => {
-    return Restaurant.findByPk(req.params.id,
-      { include: [Category, Comment, { model: User, as: 'FavoritedUsers' }] }
-    )
-      .then(restaurant => {
-        res.render('dashboard', { restaurant: restaurant.toJSON() })
-      })
-      .catch(err => next(err))
+    restaurantServices.getDashboard(req, (err, data) => err ? next(err) : res.render('dashboard', data))
   },
   getFeeds: (req, res, next) => {
     return Promise.all([

@@ -16,7 +16,7 @@ router.use('/admin', authenticated, authenticatedAdmin, admin)
 // 餐廳部分
 router.get('/restaurants', authenticated, restController.getRestaurants)
 router.get('/restaurants/:id', authenticated, restController.getRestaurant)
-
+router.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
 // 使用者部分
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn)
 router.post('/signup', userController.signUp)

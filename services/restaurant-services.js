@@ -75,6 +75,13 @@ const restaurantServices = {
         })
       })
       .catch(err => cb(err))
+  },
+  getDashboard: (req, cb) => {
+    return Restaurant.findByPk(req.params.id,
+      { include: [Category, Comment, { model: User, as: 'FavoritedUsers' }] }
+    )
+      .then(restaurant => cb(null, { restaurant: restaurant.toJSON() }))
+      .catch(err => cb(err))
   }
 }
 

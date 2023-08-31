@@ -1,4 +1,3 @@
-const { Restaurant, Category, User, Comment } = require('../../models')
 const restaurantServices = require('../../services/restaurant-services')
 
 const restaurantController = {

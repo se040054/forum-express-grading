@@ -1,6 +1,5 @@
-const { Restaurant, User, Category } = require('../../models')
+const { Restaurant, Category } = require('../../models')
 
-const { localFileHandler } = require('../../helpers/file-helper')
 const { deletedCategoryFilter } = require('../../helpers/deleted-filter-helper')
 
 const adminServices = require('../../services/admin-services')

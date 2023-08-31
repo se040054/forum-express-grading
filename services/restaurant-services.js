@@ -82,6 +82,43 @@ const restaurantServices = {
     )
       .then(restaurant => cb(null, { restaurant: restaurant.toJSON() }))
       .catch(err => cb(err))
+  },
+  getFeeds: (req, cb) => {
+    return Promise.all([
+      Restaurant.findAll({
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']], // (!)不要用到空白
+        include: [Category],
+        limit: 10
+      }),
+      Comment.findAll({
+        raw: true,
+        nest: true,
+        include: [Restaurant, User],
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+      })
+    ])
+      .then(([restaurants, comments]) => cb(null, { restaurants, comments }))
+      .catch(err => cb(err))
+  },
+  getTopRestaurants: (req, cb) => {
+    return Restaurant.findAll({
+      include: [{ model: User, as: 'FavoritedUsers' }]
+    })
+      .then(restaurants => {
+        restaurants = restaurants.map(restaurant => ({
+          ...restaurant.toJSON(),
+          description: restaurant.description?.substring(0, 50),
+          favoritedCount: restaurant.FavoritedUsers.length,
+          isFavorited: req.user && req.user.FavoritedRestaurants?.some(fr => fr.id === restaurant.id)
+        })// 記得要驗證req.user
+        ).sort((res1, res2) => res2.favoritedCount - res1.favoritedCount)
+        restaurants = restaurants.slice(0, 10)
+        return cb(null, { restaurants })
+      })
+      .catch(err => cb(err))
   }
 }
 

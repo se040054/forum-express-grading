@@ -13,5 +13,6 @@ router.put('/restaurants/:id', adminController.putRestaurant)
 
 // 管理者用戶部分
 router.get('/users', adminController.getUsers)
+router.patch('/users/:id', adminController.patchUser)
 
 module.exports = router

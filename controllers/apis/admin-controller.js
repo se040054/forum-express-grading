@@ -21,8 +21,10 @@ const adminController = {
   // 管理者用戶部分
   getUsers: (req, res, next) => {
     adminServices.getUsers(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
+  patchUser: (req, res, next) => {
+    adminServices.patchUser(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   }
-
 }
 
 module.exports = adminController

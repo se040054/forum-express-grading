@@ -85,6 +85,19 @@ const adminServices = {
         return cb(null, { users })
       })
       .catch(err => cb(err))
+  },
+  patchUser: (req, cb) => { // 注意如果把當前管理者改掉會跳出後臺管理
+    return User.findByPk(req.params.id)
+      .then(user => {
+        if (!user) throw new Error('用戶不存在')
+        if (user.email === 'root@example.com') throw new Error('禁止變更 root 權限')
+        // 記得services不寫flash 要寫error
+        return user.update({ isAdmin: !user.isAdmin })
+      })
+      .then(patchedUser => {
+        return cb(null, { user: patchedUser })
+      })
+      .catch(err => cb(err))
   }
 }
 module.exports = adminServices

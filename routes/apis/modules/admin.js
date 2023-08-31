@@ -8,4 +8,5 @@ router.get('/restaurants', adminController.getRestaurants)
 router.post('/restaurants', upload.single('image'), adminController.postRestaurant)
 router.delete('/restaurants/:id', adminController.deleteRestaurant)
 router.get('/restaurants/:id', adminController.getRestaurant)
+router.put('/restaurants/:id', adminController.putRestaurant)
 module.exports = router

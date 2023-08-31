@@ -45,8 +45,31 @@ const adminServices = {
     })
       .then(restaurant => {
         if (!restaurant) throw new Error('此餐廳不存在')
-        cb(null, { restaurant })
+        return cb(null, { restaurant })
       })
+      .catch(err => cb(err))
+  },
+  putRestaurant: (req, cb) => {
+    const { name, tel, address, openingHours, description, categoryId } = req.body
+    if (!name) throw new Error('名字不可空白')
+    const { file } = req
+    Promise.all([
+      Restaurant.findByPk(req.params.id), // 從資料庫抓餐廳回來
+      localFileHandler(file) // 寫入新檔案並抓取路徑
+    ])
+      .then(([restaurant, filePath]) => {
+        if (!restaurant) throw new Error('此餐廳不存在')
+        return restaurant.update({
+          name,
+          tel,
+          address,
+          openingHours: openingHours || restaurant.openingHours, // (!)編輯頁面時間是空的 容易蓋掉
+          description,
+          image: filePath || restaurant.image, // 如果有filepath就覆寫 沒有就用原本的資料庫路徑
+          categoryId
+        })
+        // 注意這邊要加return 讓findByPk有返回值 才能讓後續接.then
+      }).then(editedRestaurant => cb(null, { restaurant: editedRestaurant }))
       .catch(err => cb(err))
   }
 }

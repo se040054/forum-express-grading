@@ -47,4 +47,5 @@ const restaurantServices = {
       .catch(err => cb(err))
   }
 }
+
 module.exports = restaurantServices

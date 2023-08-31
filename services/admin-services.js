@@ -36,6 +36,18 @@ const adminServices = {
       }))
       .then(newRestaurant => cb(null, { restaurant: newRestaurant }))
       .catch(err => cb(err))
+  },
+  getRestaurant: (req, cb) => {
+    Restaurant.findByPk(req.params.id, {
+      raw: true,
+      nest: true,
+      include: [Category]
+    })
+      .then(restaurant => {
+        if (!restaurant) throw new Error('此餐廳不存在')
+        cb(null, { restaurant })
+      })
+      .catch(err => cb(err))
   }
 }
 module.exports = adminServices
